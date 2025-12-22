@@ -1,0 +1,37 @@
+services:
+  emqx:
+    image: emqx/emqx:latest
+    container_name: bridge-emqx
+    hostname: emqx    
+    restart: unless-stopped
+    networks:
+      - bridge_network
+    ports:
+      - "2883:1883"    #host
+      - "8883:8883"    #TLS/SSL
+      - "18083:18083"  #UI
+      - "8084:8084"    #Web socket with TLS/SSL
+    environment:
+      - "EMQX_NAME=admin" # node & cluster
+      - "EMQX_ADMIN_PASSWORD=d@mn" # Password CLI admin
+      - "EMQX_HOST=127.0.0.1"
+
+      - EMQX_DASHBOARD__DEFAULT_USERNAME=admin
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=admin@123
+    volumes:
+      - vol-emqx-data:/opt/emqx/data
+      - vol-emqx-etc:/opt/emqx/etc
+      - vol-emqx-log:/opt/emqx/log
+
+networks:
+  bridge_network:
+    driver: bridge
+
+
+volumes:
+  vol-emqx-data:
+    name: emqx-data
+  vol-emqx-etc:
+    name: emqx-etc
+  vol-emqx-log:
+    name: emqx-log
